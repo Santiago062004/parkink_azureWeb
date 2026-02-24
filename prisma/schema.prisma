@@ -1,12 +1,12 @@
 // prisma/schema.prisma
-// Modelos de datos para EAFIT Smart Parking
+// Modelos de datos para EAFIT Smart Parking - Optimizado para PostgreSQL (Supabase)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql" // Cambio clave: de sqlite a postgresql
   url      = env("DATABASE_URL")
 }
 
@@ -14,22 +14,22 @@ datasource db {
 // Zona de parqueadero del campus EAFIT
 // ─────────────────────────────────────────────
 model Zona {
-  id               String    @id @default(cuid())
+  id               String   @id @default(cuid())
   nombre           String
-  slug             String    @unique
+  slug             String   @unique
   lat              Float
   lng              Float
   capacidadCarro   Int
   capacidadMoto    Int
-  ocupacionCarro   Int       @default(0)
-  ocupacionMoto    Int       @default(0)
+  ocupacionCarro   Int      @default(0)
+  ocupacionMoto    Int      @default(0)
   // "Norte" | "Centro-Oeste" | "Sur-Oeste" | "Oriente" | "Sur"
   ubicacion        String
   // "vegas" | "cra49" — punto de acceso más cercano
   accesoMasCercano String
-  activa           Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  activa           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   reportes         Reporte[]
 }
@@ -59,15 +59,14 @@ model Reporte {
 
 // ─────────────────────────────────────────────
 // Cache de datos de tráfico (TomTom API)
-// TTL de 60 segundos para no quemar requests
 // ─────────────────────────────────────────────
 model TraficoCache {
-  id           String   @id @default(cuid())
+  id            String   @id @default(cuid())
   // "vegas" | "cra49"
-  punto        String   @unique
-  currentSpeed Float
+  punto         String   @unique
+  currentSpeed  Float
   freeFlowSpeed Float
   congestionado Boolean
-  confidence   Float?
-  consultadoEn DateTime @default(now())
+  confidence    Float?
+  consultadoEn  DateTime @default(now())
 }
